@@ -19,7 +19,7 @@
 　munin-node を再起動して設定反映後にデータを収集し、グラフ化が開始される。
 
   ex)
-  # systemctl restart munin-node.service
+  sudo systemctl restart munin-node.service
 
 ### 冒頭の変数設定
 　SENSOR はセンサーの種別をセットする。
