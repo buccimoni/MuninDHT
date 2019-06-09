@@ -1,5 +1,5 @@
 # MuninDHT
-　最低限動作するだけの DHT 系温湿度センサーの Munin 用プラグインです。
+　最低限動作するだけの DHT 系温湿度センサーの Munin 用プラグイン。
 
 ## 動作環境
 　[Adafruit_Python_DHT](https://github.com/adafruit/Adafruit_Python_DHT) をインストールし、同梱の AdafruitDHT.py を次の様に設置する。
