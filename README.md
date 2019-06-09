@@ -3,13 +3,15 @@
 
 ## 動作環境
 　Adafruit_Python_DHT をインストールし、同梱の AdafruitDHT.py を次の様に設置する。
-`cp AdafruitDHT.py /usr/local/bin/dht.py`
+
+    cp AdafruitDHT.py /usr/local/bin/dht.py
 
 　<https://github.com/adafruit/Adafruit_Python_DHT>
 
 ## 使い方
 　基本的に /etc/munin/plugins 以下へ本スクリプトを設置するだけ。
-`cp dht.sh /etc/munin/plugins`
+
+    cp dht.sh /etc/munin/plugins
 
 ### 冒頭の変数設定
 　SENSOR はセンサーの種別をセットする。
