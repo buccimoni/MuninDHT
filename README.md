@@ -11,7 +11,7 @@
 ## 使い方
 　基本的に /etc/munin/plugins 以下へ本スクリプトを設置するだけ。
 
-    cp dht.sh /etc/munin/plugins
+    cp dht /etc/munin/plugins
 
 ### 冒頭の変数設定
 　SENSOR はセンサーの種別をセットする。
