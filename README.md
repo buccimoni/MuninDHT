@@ -11,7 +11,7 @@
 
     cp dht /etc/munin/plugins
 
-　/etc/munin/plugin-conf.d/00default 等の設定ファイルに次のエントリを追加する。
+　/etc/munin/plugin-conf.d/00-default 等の設定ファイルに次のエントリを追加する。
 
     [dht]
     user root
