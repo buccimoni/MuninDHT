@@ -7,9 +7,19 @@
     cp AdafruitDHT.py /usr/local/bin/dht.py
 
 ## 使い方
-　基本的に /etc/munin/plugins 以下へ本スクリプトを設置するだけ。
+　/etc/munin/plugins 以下へ本スクリプトを設置する。
 
     cp dht /etc/munin/plugins
+
+　/etc/munin/plugin-conf.d/00default 等の設定ファイルに次のエントリを追加する。
+
+    [dht]
+    user root
+
+　munin-node を再起動して設定反映後にデータを収集し、グラフ化が開始される。
+
+  ex)
+  # systemctl restart munin-node.service
 
 ### 冒頭の変数設定
 　SENSOR はセンサーの種別をセットする。
