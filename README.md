@@ -4,7 +4,7 @@
 ## 動作環境
 　[Adafruit_Python_DHT](https://github.com/adafruit/Adafruit_Python_DHT) をインストールし、同梱の AdafruitDHT.py を次の様に設置する。
 
-    cp AdafruitDHT.py /usr/local/bin/dht.py
+    cp /path/to/Adafruit_Python_DHT/examples/AdafruitDHT.py /usr/local/bin/dht.py
 
 ## 使い方
 　/etc/munin/plugins 以下へ本スクリプトを設置する。
