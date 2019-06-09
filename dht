@@ -1,5 +1,5 @@
 #!/bin/bash
-# Munin Plugin for DHT22.
+# Munin Plugin for Adafruit_Python_DHT.
 LANG=C
 
 # set device info.
