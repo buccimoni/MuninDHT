@@ -1,14 +1,72 @@
 #!/bin/bash
-# Munin Plugin for Adafruit_Python_DHT.
+# -*- sh -*-
+
+: << =cut
+
+=head1 NAME
+Munin Plugin for Adafruit_Python_DHT.
+
+=head1 APPLICABLE SYSTEMS
+
+Raspberry Pi with DHT11/22, AM2302 connected.
+
+=head1 CONFIGURATION
+
+ [dht]
+  user root
+  env.script             - Location of Adafruit_Python_DHT example script.
+                           It default filename is "AdafruitDHT.py"
+  env.sensor             - Kind of sensor. 11 or 22 or 2302
+  env.gpio               - GPIO Number connected.
+  env.tempcorrection     - Temperature Correction Value.
+  env.humiditycorrection - Humidity Correction Value.
+  env.retry              - Number of retries at error.
+
+=head2 DEFAULT CONFIGURATION
+
+ Default configurations are...
+
+ [dht]
+  user root
+  env.script /usr/local/bin/AdafruitDHT.py
+  env.sensor 2302
+  env.gpio 4
+  env.tempcorrection 0
+  env.humiditycorrection 0
+  env.retry 2
+
+=head1 AUTHOR
+
+BuCCi
+
+=head1 LICENSE
+
+GPLv2
+
+=head1 MAGIC MARKERS
+
+  #%# family=auto
+  #%# capabilities=autoconf
+
+=cut
+
 LANG=C
 
+if [ "$1" = "autoconf" ]; then
+    echo yes
+    exit 0
+fi
+
+# set script file
+SCRIPT=${script:-/usr/local/bin/AdafruitDHT.py}
+
 # set device info.
-SENSOR=2302
-GPIO=4
+SENSOR=${sensor:-2302}
+GPIO=${gpio:-4}
 
 # Value Correction.
-TempCorrection=0
-HumidityCorrection=-2.8
+TempCorrection=${tempcorrection:-0}
+HumidityCorrection=${humiditycorrection:-0}
 
 # Configuration.
 if [ "$1" = "config" ]; then
@@ -32,12 +90,12 @@ fi
 # Set Variables.
 STAT=1
 RCNT=1
-MAX_RETRY=2
+MAX_RETRY=${retry:-2}
 
 # It is adjusted to return 0 in the case of an error after a certain number of retries.
 while [ $STAT -ne 0 ]
 do
-    DHT=`/usr/local/bin/dht.py $SENSOR $GPIO`
+    DHT=`$SCRIPT $SENSOR $GPIO`
     STAT=$?
     if [ $RCNT -eq $MAX_RETRY ]; then
         A=`echo "-1 * $TempCorrection" | bc`
