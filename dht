@@ -16,6 +16,7 @@ Raspberry Pi with DHT11/22, AM2302 connected.
   user root
   env.script             - Location of Adafruit_Python_DHT example script.
                            It default filename is "AdafruitDHT.py"
+  env.templog            - Last temperature Log.
   env.sensor             - Kind of sensor. 11 or 22 or 2302
   env.gpio               - GPIO Number connected.
   env.tempcorrection     - Temperature Correction Value.
@@ -29,6 +30,7 @@ Raspberry Pi with DHT11/22, AM2302 connected.
  [dht]
   user root
   env.script /usr/local/bin/AdafruitDHT.py
+  env.templog /tmp/dht_temp_log
   env.sensor 2302
   env.gpio 4
   env.tempcorrection 0
@@ -52,6 +54,32 @@ GPLv2
 
 LANG=C
 
+function get_dht_data() {
+    # Set Variables.
+    STAT=1
+    RCNT=1
+    MAX_RETRY=${retry:-2}
+    
+    # It is adjusted to return 0 in the case of an error after a certain number of retries.
+    while [ $STAT -ne 0 ]
+    do
+        DHT=`$SCRIPT $SENSOR $GPIO`
+        STAT=$?
+        if [ $RCNT -eq $MAX_RETRY ]; then
+            A=`echo "-1 * $TempCorrection" | bc`
+            B=`echo "-1 * $HumidityCorrection" | bc`
+            DHT="Temp=$A*  Humidity=$B%"
+            STAT=0
+        fi
+        RCNT=$((++RCNT))
+    done
+
+    # Parse
+    Temperature=`echo $DHT | sed -e 's/Temp\=\(.*\)\*.*$/\1/;'`
+    Humidity=`echo $DHT | sed -e 's/^.*Humidity\=\(.*\)\%.*$/\1/;'`
+}
+
+
 if [ "$1" = "autoconf" ]; then
     echo yes
     exit 0
@@ -59,6 +87,9 @@ fi
 
 # set script file
 SCRIPT=${script:-/usr/local/bin/AdafruitDHT.py}
+
+# set log file
+TEMPLOG=${templog:-/tmp/dht_temp_log}
 
 # set device info.
 SENSOR=${sensor:-2302}
@@ -87,31 +118,28 @@ if [ "$1" = "config" ]; then
     exit 0
 fi
 
-# Set Variables.
-STAT=1
-RCNT=1
-MAX_RETRY=${retry:-2}
+# Get Temp and Humidity.
+get_dht_data
 
-# It is adjusted to return 0 in the case of an error after a certain number of retries.
-while [ $STAT -ne 0 ]
-do
-    DHT=`$SCRIPT $SENSOR $GPIO`
-    STAT=$?
-    if [ $RCNT -eq $MAX_RETRY ]; then
-        A=`echo "-1 * $TempCorrection" | bc`
-        B=`echo "-1 * $HumidityCorrection" | bc`
-        DHT="Temp=$A*  Humidity=$B%"
-        STAT=0
+# Temperature underspike Correction
+# If the temperature is 10 degrees lower than the previously acquired temperature, acquire it again.
+if [ -f $TEMPLOG ]; then
+    Lasttemp=`cat $TEMPLOG`
+    echo $Lasttemp
+    
+    if [ `echo "$Temperature <= $Lasttemp - 10" | bc` -eq 1 ]; then
+        get_dht_data
     fi
-    RCNT=$((++RCNT))
-done
-
-# Parse
-Temperature=`echo $DHT | sed -e 's/Temp\=\(.*\)\*.*$/\1/;'`
-Humidity=`echo $DHT | sed -e 's/^.*Humidity\=\(.*\)\%.*$/\1/;'`
+fi
 
 # Value set & Correction
-echo temp.value `echo "$Temperature + $TempCorrection" | bc`
-echo humidity.value `echo "$Humidity + $HumidityCorrection" | bc`
+CorrectedTemp=`echo "$Temperature + $TempCorrection" | bc`
+CorrectedHumd=`echo "$Humidity + $HumidityCorrection" | bc`
+echo temp.value $CorrectedTemp
+echo humidity.value $CorrectedHumd
+
+echo $Temperature > $TEMPLOG
+
+unset get_dht_data
 
 exit 0
