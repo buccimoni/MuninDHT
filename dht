@@ -125,7 +125,6 @@ get_dht_data
 # If the temperature is 10 degrees lower than the previously acquired temperature, acquire it again.
 if [ -f $TEMPLOG ]; then
     Lasttemp=`cat $TEMPLOG`
-    echo $Lasttemp
     
     if [ `echo "$Temperature <= $Lasttemp - 10" | bc` -eq 1 ]; then
         get_dht_data
