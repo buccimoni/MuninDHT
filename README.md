@@ -54,6 +54,9 @@
 　その為、取得した温度を一時的に保存しておき、次回データ取得時に比較する事で異常検知を行う。  
 　実際には前回との温度差が 10 度以上低い場合はデータ取得を 1 度限りリトライする事で異常を防止する仕組み。
 
+　一時記録用ファイルは munin-node の systemd unit ファイル内に PrivateTmp=true とある場合、`/tmp/systemd-private-*-munin-node.service-*/tmp/` 以下に作成される。  
+　munin-run を用いて実行した場合とパスが異なる可能性がある点に注意。
+
 ### 表示サンプル
 
 ![表示サンプル](https://bucci.bp7.org/dht22.png)
